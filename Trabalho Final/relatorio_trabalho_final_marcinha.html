@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Pipeline de Contratos — Relatorio Final</title>
+<style>
+  * { box-sizing:border-box; }
+  body { font-family:Arial,sans-serif; margin:0; padding:20px; background:#f0f2f5; color:#333; }
+  .header { background:linear-gradient(135deg,#0D2B55,#1565C0); color:white;
+             padding:28px 32px; border-radius:10px; margin-bottom:24px; }
+  .header h1 { margin:0; font-size:20px; }
+  .header p  { margin:6px 0 0; opacity:.8; font-size:12px; }
+  .cards { display:flex; gap:14px; margin-bottom:24px; flex-wrap:wrap; }
+  .card { background:white; border-radius:10px; padding:18px 22px; flex:1; min-width:140px;
+           box-shadow:0 2px 8px rgba(0,0,0,.08); border-top:4px solid #1565C0; }
+  .card.green { border-color:#2E7D32; }
+  .card.red   { border-color:#C62828; }
+  .card.teal  { border-color:#00838F; }
+  .card.gray  { border-color:#455A64; }
+  .card .num  { font-size:26px; font-weight:700; color:#0D2B55; }
+  .card.green .num { color:#2E7D32; }
+  .card.red   .num { color:#C62828; }
+  .card.teal  .num { color:#00838F; }
+  .card .lbl  { font-size:11px; color:#777; margin-top:4px; text-transform:uppercase; letter-spacing:.5px; }
+  .section { background:white; border-radius:10px; padding:24px; margin-bottom:20px;
+              box-shadow:0 2px 8px rgba(0,0,0,.08); }
+  .section h2 { margin-top:0; font-size:14px; color:#0D2B55;
+                 border-bottom:2px solid #E3F2FD; padding-bottom:10px; margin-bottom:16px; }
+  .bar-row { display:flex; align-items:center; gap:10px; margin-bottom:8px; }
+  .bar-label { width:230px; font-size:12px; text-align:right; color:#555; flex-shrink:0; }
+  .bar-wrap  { flex:1; background:#ECEFF1; border-radius:4px; height:15px; }
+  .bar-fill  { border-radius:4px; height:100%; }
+  .bar-count { width:90px; font-size:11px; color:#888; flex-shrink:0; }
+  .conf { display:flex; gap:12px; margin-bottom:14px; }
+  .badge { padding:5px 14px; border-radius:20px; font-size:12px; font-weight:600; }
+  .alta  { background:#E8F5E9; color:#2E7D32; }
+  .media { background:#FFF8E1; color:#F57F17; }
+  .baixa { background:#FFEBEE; color:#C62828; }
+  table { width:100%; border-collapse:collapse; font-size:11px; }
+  th { background:#0D2B55; color:white; padding:8px 10px; text-align:left; font-weight:500; }
+  td { padding:7px 10px; border-bottom:1px solid #F0F0F0; vertical-align:top; }
+  tr:hover td { background:#F5F9FF; }
+  .footer { text-align:center; font-size:11px; color:#AAA; margin-top:20px; padding:10px; }
+  .stack { background:#E3F2FD; border-radius:8px; padding:12px 18px; font-size:12px;
+            color:#1565C0; margin-bottom:20px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Pipeline de Dados — Contratos Publicos do Ceara</h1>
+  <p>
+    Trabalho Final | Arquitetura e Automacao de Pipeline de Dados | UNIFOR 2026 |
+    Prof. MSc. Daniel Teofilo | Gerado em 19/07/2026 19:25
+  </p>
+</div>
+
+<div class="stack">
+  <strong>Stack:</strong> Apache Airflow &nbsp;·&nbsp; Python 3 &nbsp;·&nbsp;
+  PostgreSQL &nbsp;·&nbsp; API Ceara Transparente &nbsp;·&nbsp;
+  Groq LLM (llama-3.3-70b-versatile) &nbsp;·&nbsp; 5 Tasks (DAG)
+</div>
+
+<div class="cards">
+  <div class="card"><div class="num">2000</div><div class="lbl">Contratos extraidos</div></div>
+  <div class="card teal"><div class="num">30</div><div class="lbl">Contratos classificados (top 30)</div></div>
+  <div class="card red"><div class="num">5</div><div class="lbl">Objetos vagos detectados</div></div>
+  <div class="card green"><div class="num">R$ 15.848.304.609,00</div><div class="lbl">Valor total classificado</div></div>
+  <div class="card gray"><div class="num">12,247</div><div class="lbl">Tokens LLM consumidos</div></div>
+</div>
+
+<div class="section">
+  <h2>Confianca das Classificacoes</h2>
+  <div class="conf">
+    <span class="badge alta">ALTA: 20 (66.7%)</span>
+    <span class="badge media">MEDIA: 5 (16.7%)</span>
+    <span class="badge baixa">BAIXA: 5 (16.7%)</span>
+  </div>
+</div>
+
+<div class="section">
+  <h2>Distribuicao por Categoria Tematica</h2>
+  
+        <div class="bar-row">
+          <span class="bar-label">Infraestrutura e Obras</span>
+          <div class="bar-wrap"><div class="bar-fill" style="width:100%;background:#1565C0"></div></div>
+          <span class="bar-count">12 (40.0%)</span>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">Outros</span>
+          <div class="bar-wrap"><div class="bar-fill" style="width:42%;background:#00838F"></div></div>
+          <span class="bar-count">5 (16.7%)</span>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">Servicos Gerais</span>
+          <div class="bar-wrap"><div class="bar-fill" style="width:33%;background:#2E7D32"></div></div>
+          <span class="bar-count">4 (13.3%)</span>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">Saude</span>
+          <div class="bar-wrap"><div class="bar-fill" style="width:33%;background:#6A1B9A"></div></div>
+          <span class="bar-count">4 (13.3%)</span>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">Educacao</span>
+          <div class="bar-wrap"><div class="bar-fill" style="width:25%;background:#E65100"></div></div>
+          <span class="bar-count">3 (10.0%)</span>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">Meio Ambiente e Saneamento</span>
+          <div class="bar-wrap"><div class="bar-fill" style="width:8%;background:#AD1457"></div></div>
+          <span class="bar-count">1 (3.3%)</span>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">Tecnologia da Informacao</span>
+          <div class="bar-wrap"><div class="bar-fill" style="width:8%;background:#00695C"></div></div>
+          <span class="bar-count">1 (3.3%)</span>
+        </div>
+</div>
+
+<div class="section">
+  <h2>Top 30 Contratos Classificados por Valor</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>N. Contrato</th><th>Objeto</th><th>Orgao</th>
+        <th>Categoria</th><th>Confianca</th><th>Valor</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>075/2026</td>
+          <td>CT 075/2026 - COAGUA - Constitui objeto deste Contrato a execução de s...</td>
+          <td>21000000</td>
+          <td>Infraestrutura e Obras</td>
+          <td style="color:#2E7D32;font-weight:600">ALTA</td>
+          <td style="text-align:right;font-weight:600;color:#0D2B55">R$ 3.759.506.631,00</td>
+        </tr>
+        <tr>
+          <td>037/2026</td>
+          <td>O objeto do presente instrumento é a contratação de empresa para prest...<span style="color:#C62828;font-weight:600"> ⚠ VAGO</span></td>
+          <td>19000000</td>
+          <td>Servicos Gerais</td>
+          <td style="color:#F57F17;font-weight:600">MEDIA</td>
+          <td style="text-align:right;font-weight:600;color:#0D2B55">R$ 2.190.646.608,00</td>
+        </tr>
+        <tr>
+          <td>042/2026</td>
+          <td>O objeto do presente instrumento é a Construção da Unidade Prisional D...</td>
+          <td>18000000</td>
+          <td>Infraestrutura e Obras</td>
+          <td style="color:#2E7D32;font-weight:600">ALTA</td>
+          <td style="text-align:right;font-weight:600;color:#0D2B55">R$ 1.799.800.000,00</td>
+        </tr>
+        <tr>
+          <td>043/2026</td>
+          <td>Contratação de empresa para prestação de serviços contínuos a serem ex...<span style="color:#C62828;font-weight:600"> ⚠ VAGO</span></td>
+          <td>18000000</td>
+          <td>Servicos Gerais</td>
+          <td style="color:#F57F17;font-weight:600">MEDIA</td>
+          <td style="text-align:right;font-weight:600;color:#0D2B55">R$ 1.361.815.368,00</td>
+        </tr>
+        <tr>
+          <td>461/2026</td>
+          <td>CONSTRUÇÃO DE UMA ESCOLA DE ENSINO MÉDIO, URBANA, TIPO II, COM 12 (DOZ...</td>
+          <td>22000000</td>
+          <td>Educacao</td>
+          <td style="color:#2E7D32;font-weight:600">ALTA</td>
+          <td style="text-align:right;font-weight:600;color:#0D2B55">R$ 1.101.411.346,00</td>
+        </tr>
+        <tr>
+          <td>069/2026</td>
+          <td>CT 069/2026 - COAGUA - Constitui objeto deste Contrato a execução de s...</td>
+          <td>21000000</td>
+          <td>Infraestrutura e Obras</td>
+          <td style="color:#2E7D32;font-weight:600">ALTA</td>
+          <td style="text-align:right;font-weight:600;color:#0D2B55">R$ 1.074.144.752,00</td>
+        </tr>
+        <tr>
+          <td>072/2026</td>
+          <td>CT 072/2026 - CODEA - Constitui objeto deste instrumento a contratação...</td>
+          <td>21000000</td>
+          <td>Meio Ambiente e Saneamento</td>
+          <td style="color:#2E7D32;font-weight:600">ALTA</td>
+          <td style="text-align:right;font-weight:600;color:#0D2B55">R$ 499.767.728,00</td>
+        </tr>
+        <tr>
+          <td>064/2026/ISSEC</td>
+          <td>Contratação da empresa GENTE SERVICOS E LOCACAO DE MAO DE OBRA LTDA, i...</td>
+          <td>46200001</td>
+          <td>Tecnologia da Informacao</td>
+          <td style="color:#2E7D32;font-weight:600">ALTA</td>
+          <td style="text-align:right;font-weight:600;color:#0D2B55">R$ 437.373.972,00</td>
+        </tr>
+        <tr>
+          <td>036/2026</td>
+          <td>Constitui objeto do presente instrumento a contratação emergencial da ...<span style="color:#C62828;font-weight:600"> ⚠ VAGO</span></td>
+          <td>18000000</td>
+          <td>Servicos Gerais</td>
+          <td style="color:#F57F17;font-weight:600">MEDIA</td>
+          <td style="text-align:right;font-weight:600;color:#0D2B55">R$ 414.396.756,00</td>
+        </tr>
+        <tr>
+          <td>074/2026</td>
+          <td>Pavimentação da CE-166 no Trecho Entr. CE-284 (B) - Vila de Bela Vista...</td>
+          <td>43200007</td>
+          <td>Infraestrutura e Obras</td>
+          <td style="color:#2E7D32;font-weight:600">ALTA</td>
+          <td style="text-align:right;font-weight:600;color:#0D2B55">R$ 275.618.490,00</td>
+        </tr>
+        <tr>
+          <td>059/2026/ISSEC</td>
+          <td>Contratação da empresa QS QUALIDADE EM SERVIÇOS LTDA., inscrita no CNP...</td>
+          <td>46200001</td>
+          <td>Outros</td>
+          <td style="color:#C62828;font-weight:600">BAIXA</td>
+          <td style="text-align:right;font-weight:600;color:#0D2B55">R$ 230.421.384,00</td>
+        </tr>
+        <tr>
+          <td>522/2026</td>
+          <td>CONTRATUALIZAÇÃO DA ARP Nº 2025/17836, QUE TEM COMO OBJETO SERVIÇOS ES...</td>
+          <td>24200234</td>
+          <td>Saude</td>
+          <td style="color:#2E7D32;font-weight:600">ALTA</td>
+          <td style="text-align:right;font-weight:600;color:#0D2B55">R$ 222.867.632,00</td>
+        </tr>
+        <tr>
+          <td>21/2026</td>
+          <td>Contratação de empresa para prestação de serviços contínuos a serem ex...<span style="color:#C62828;font-weight:600"> ⚠ VAGO</span></td>
+          <td>46000000</td>
+          <td>Servicos Gerais</td>
+          <td style="color:#F57F17;font-weight:600">MEDIA</td>
+          <td style="text-align:right;font-weight:600;color:#0D2B55">R$ 221.633.892,00</td>
+        </tr>
+        <tr>
+          <td>CONTRATO Nº 151/2026</td>
+          <td>O objeto do presente instrumento é a CONCLUSÃO DA CONSTRUÇÃO DE UM CIN...</td>
+          <td>27000000</td>
+          <td>Infraestrutura e Obras</td>
+          <td style="color:#2E7D32;font-weight:600">ALTA</td>
+          <td style="text-align:right;font-weight:600;color:#0D2B55">R$ 202.253.059,00</td>
+        </tr>
+        <tr>
+          <td>-</td>
+          <td>AQUISIÇÃO DE VOSORITIDA, 0,56MG/0,7ML, PÓ LIOFILIZADO PARA SOLUÇÃO INJ...</td>
+          <td>24200004</td>
+          <td>Outros</td>
+          <td style="color:#C62828;font-weight:600">BAIXA</td>
+          <td style="text-align:right;font-weight:600;color:#0D2B55">R$ 197.138.603,00</td>
+        </tr>
+        <tr>
+          <td>635/2026</td>
+          <td>DISPENSA DE LICITAÇÃO PARA CONTRATAÇÃO DE SERVIÇOS ESPECIALIZADOS EM H...</td>
+          <td>24200184</td>
+          <td>Saude</td>
+          <td style="color:#2E7D32;font-weight:600">ALTA</td>
+          <td style="text-align:right;font-weight:600;color:#0D2B55">R$ 181.822.969,00</td>
+        </tr>
+        <tr>
+          <td>CONTRATO Nº 137/2026</td>
+          <td>O objeto do presente instrumento é a CONSTRUÇÃO DO CEU DA CULTURA, NO ...</td>
+          <td>27000000</td>
+          <td>Infraestrutura e Obras</td>
+          <td style="color:#2E7D32;font-weight:600">ALTA</td>
+          <td style="text-align:right;font-weight:600;color:#0D2B55">R$ 176.325.137,00</td>
+        </tr>
+        <tr>
+          <td>071/2026</td>
+          <td>CT 071/2026 - CODECE - O objeto do presente instrumento é a aquisição ...</td>
+          <td>21000000</td>
+          <td>Outros</td>
+          <td style="color:#C62828;font-weight:600">BAIXA</td>
+          <td style="text-align:right;font-weight:600;color:#0D2B55">R$ 171.918.616,00</td>
+        </tr>
+        <tr>
+          <td>CONTRATO Nº 153/2026</td>
+          <td>O objeto do presente instrumento é a CONSTRUÇÃO DO CEU DA CULTURA, NO ...</td>
+          <td>27000000</td>
+          <td>Infraestrutura e Obras</td>
+          <td style="color:#2E7D32;font-weight:600">ALTA</td>
+          <td style="text-align:right;font-weight:600;color:#0D2B55">R$ 161.969.973,00</td>
+        </tr>
+        <tr>
+          <td>90/2026</td>
+          <td>Trata-se de demanda visando à contratação de solução de proteção de re...</td>
+          <td>08200003</td>
+          <td>Outros</td>
+          <td style="color:#C62828;font-weight:600">BAIXA</td>
+          <td style="text-align:right;font-weight:600;color:#0D2B55">R$ 148.167.771,00</td>
+        </tr>
+        <tr>
+          <td>2026_001_0705</td>
+          <td>Contratação de Mão de Obra Terceirizada para a Área de SAÚDE da Sede e...</td>
+          <td>10100007</td>
+          <td>Saude</td>
+          <td style="color:#2E7D32;font-weight:600">ALTA</td>
+          <td style="text-align:right;font-weight:600;color:#0D2B55">R$ 135.683.517,00</td>
+        </tr>
+        <tr>
+          <td>063/2026</td>
+          <td>Implantação do Viaduto Rodoviário na CE-390 no Cruzamento Rodoferroviá...</td>
+          <td>43200007</td>
+          <td>Outros</td>
+          <td style="color:#C62828;font-weight:600">BAIXA</td>
+          <td style="text-align:right;font-weight:600;color:#0D2B55">R$ 119.890.000,00</td>
+        </tr>
+        <tr>
+          <td>073/2026</td>
+          <td>SERVIÇOS DE MANUTENÇÃO CORRETIVA E PREVENTIVA EM PRÉDIOS PÚBLICOS - CG...</td>
+          <td>43200007</td>
+          <td>Infraestrutura e Obras</td>
+          <td style="color:#2E7D32;font-weight:600">ALTA</td>
+          <td style="text-align:right;font-weight:600;color:#0D2B55">R$ 119.229.537,00</td>
+        </tr>
+        <tr>
+          <td>067/2026</td>
+          <td>SERVIÇOS DE MANUTENÇÃO CORRETIVA E PREVENTIVA NO CENTRO CULTURAL BOM J...</td>
+          <td>43200007</td>
+          <td>Infraestrutura e Obras</td>
+          <td style="color:#2E7D32;font-weight:600">ALTA</td>
+          <td style="text-align:right;font-weight:600;color:#0D2B55">R$ 118.968.565,00</td>
+        </tr>
+        <tr>
+          <td>489/2026</td>
+          <td>Serviço de manutenção predial na EEMTI JOSÉ MARIA CAMPOS DE OLIVEIRA, ...</td>
+          <td>22000000</td>
+          <td>Infraestrutura e Obras</td>
+          <td style="color:#2E7D32;font-weight:600">ALTA</td>
+          <td style="text-align:right;font-weight:600;color:#0D2B55">R$ 99.823.458,00</td>
+        </tr>
+        <tr>
+          <td>490/2026</td>
+          <td>O objeto do Contrato nº 490/2026 é a prestação dos serviços comuns de ...</td>
+          <td>22000000</td>
+          <td>Infraestrutura e Obras</td>
+          <td style="color:#2E7D32;font-weight:600">ALTA</td>
+          <td style="text-align:right;font-weight:600;color:#0D2B55">R$ 99.269.431,00</td>
+        </tr>
+        <tr>
+          <td>-</td>
+          <td>AQUISIÇÃO DE MATERIAIS PERMANENTES - DISTRIBUIÇÃO GRATUITA<span style="color:#C62828;font-weight:600"> ⚠ VAGO</span></td>
+          <td>61000000</td>
+          <td>Educacao</td>
+          <td style="color:#F57F17;font-weight:600">MEDIA</td>
+          <td style="text-align:right;font-weight:600;color:#0D2B55">R$ 89.975.886,00</td>
+        </tr>
+        <tr>
+          <td>068/2026</td>
+          <td>SERVIÇOS DE MANUTENÇÃO CORRETIVA E PREVENTIVA EM PRÉDIOS PÚBLICOS - LA...</td>
+          <td>43200007</td>
+          <td>Infraestrutura e Obras</td>
+          <td style="color:#2E7D32;font-weight:600">ALTA</td>
+          <td style="text-align:right;font-weight:600;color:#0D2B55">R$ 82.647.508,00</td>
+        </tr>
+        <tr>
+          <td>582/2026</td>
+          <td>CONTRATUALIZAÇÃO DO SALDO DISPONÍVEL NA ATA DE REGISTRO DE PREÇOS N.º ...</td>
+          <td>24200184</td>
+          <td>Saude</td>
+          <td style="color:#2E7D32;font-weight:600">ALTA</td>
+          <td style="text-align:right;font-weight:600;color:#0D2B55">R$ 77.891.592,00</td>
+        </tr>
+        <tr>
+          <td>018/2026 - UVA/PROPLAN</td>
+          <td>AQUISIÇÃO DE MATERIAL PERMANENTE (MOBILIÁRIO EM GERAL), PARA ATENDER A...</td>
+          <td>31200002</td>
+          <td>Educacao</td>
+          <td style="color:#2E7D32;font-weight:600">ALTA</td>
+          <td style="text-align:right;font-weight:600;color:#0D2B55">R$ 75.924.428,00</td>
+        </tr></tbody>
+  </table>
+</div>
+
+<div class="section">
+  <h2>Objetos com Descricao Vaga (5 contratos)</h2>
+  <table>
+    <thead>
+      <tr><th>Orgao</th><th>Objeto Original</th><th>Valor</th><th>Motivo</th></tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>19000000</td>
+          <td>O objeto do presente instrumento é a contratação de empresa para prestação de se</td>
+          <td style="text-align:right;color:#C62828;font-weight:600">R$ 2.190.646.608,00</td>
+          <td>Descrição genérica de serviços</td>
+        </tr>
+        <tr>
+          <td>18000000</td>
+          <td>Contratação de empresa para prestação de serviços contínuos a serem executados c</td>
+          <td style="text-align:right;color:#C62828;font-weight:600">R$ 1.361.815.368,00</td>
+          <td>Descrição genérica de serviços</td>
+        </tr>
+        <tr>
+          <td>18000000</td>
+          <td>Constitui objeto do presente instrumento a contratação emergencial da prestação </td>
+          <td style="text-align:right;color:#C62828;font-weight:600">R$ 414.396.756,00</td>
+          <td>Descrição genérica de serviços</td>
+        </tr>
+        <tr>
+          <td>46000000</td>
+          <td>Contratação de empresa para prestação de serviços contínuos a serem executados c</td>
+          <td style="text-align:right;color:#C62828;font-weight:600">R$ 221.633.892,00</td>
+          <td>Descrição genérica de serviços</td>
+        </tr>
+        <tr>
+          <td>61000000</td>
+          <td>AQUISIÇÃO DE MATERIAIS PERMANENTES - DISTRIBUIÇÃO GRATUITA</td>
+          <td style="text-align:right;color:#C62828;font-weight:600">R$ 89.975.886,00</td>
+          <td>termo 'materiais permanentes' é genérico</td>
+        </tr></tbody>
+  </table>
+</div>
+
+<div class="footer">
+  Pipeline dag_trabalho_final_marcinha | Apache Airflow | Tabelas: contratos_api, contratos_classificados | 19/07/2026 19:25
+</div>
+
+</body>
+</html>
